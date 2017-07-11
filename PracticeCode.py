@@ -6,6 +6,12 @@ columns = 6
 Row_list = [] #List corresponding with each row
 Column_list = [] #Combination of rows to make the array
 
+def setBoardLocation(rowcolumn, item_type):
+    print "Which", str(rowcolumn), "would you like your", str(item_type), "?"
+    location = raw_input()
+    print "You have set your", str(item_type), "at", str(rowcolumn), str(location)
+    return int(location)
+
 #Set up the lists
 for column in range(columns):
     Row_list.append("O") #O for Open
@@ -39,3 +45,15 @@ print ""
 #Print the grid
 for row in range(len(Column_list)):
     print Column_list[row]
+
+#Set Boss Location
+Boss_row = setBoardLocation("row", "Boss")
+Boss_column = setBoardLocation("column", "Boss")
+
+Column_list[Boss_row][Boss_column] = "B"
+
+print ""
+#Print the grid
+for row in range(len(Column_list)):
+    print Column_list[row]
+
