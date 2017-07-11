@@ -3,8 +3,8 @@ import random
 rows = 6 - 2
 columns = 6
 
-Row_list = [] #List corresponding with each row
 Column_list = [] #Combination of rows to make the array
+Column_identifier = []
 
 def setBoardLocation(rowcolumn, item_type):
     print "Which", str(rowcolumn), "would you like your", str(item_type), "?"
@@ -13,21 +13,22 @@ def setBoardLocation(rowcolumn, item_type):
     return int(location)
 
 #Set up the lists
-for column in range(columns):
-    Row_list.append("O") #O for Open
-
 for row in range(rows):
-    Column_list.append(Row_list)
+    Column_list.append(["O"] * columns) #O for Open
 
+for column in range(columns + 1):
+    Column_identifier.append(str(column))
+
+print "x", Column_identifier
 for row in range(len(Column_list)):
-    print Column_list[row]
+    print row, Column_list[row]
 
 #Set borders
-#The first and last index of Row_list needs to be walls
-for column in range(1):
-    Column_list[0].pop()
-    Column_list[0].insert(0, "X")
-    Column_list[0].append("X")
+#The first and last index of each row needs to be walls
+for column in range(rows):
+    Column_list[column].pop()
+    Column_list[column].insert(0, "X")
+    Column_list[column].append("X")
 
 #First Row needs to be all walls
 initial_row = []
@@ -43,8 +44,9 @@ Column_list.append(final_row) #list from 0 to columns
 
 print ""
 #Print the grid
+print "x", Column_identifier
 for row in range(len(Column_list)):
-    print Column_list[row]
+    print row, Column_list[row]
 
 #Set Boss Location
 Boss_row = setBoardLocation("row", "Boss")
@@ -54,6 +56,6 @@ Column_list[Boss_row][Boss_column] = "B"
 
 print ""
 #Print the grid
+print "x", Column_identifier
 for row in range(len(Column_list)):
-    print Column_list[row]
-
+    print row, Column_list[row]
