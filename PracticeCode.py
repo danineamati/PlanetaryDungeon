@@ -6,11 +6,17 @@ columns = 6
 Column_list = [] #Combination of rows to make the array
 Column_identifier = []
 
-def setBoardLocation(rowcolumn, item_type):
-    print "Which", str(rowcolumn), "would you like your", str(item_type), "?"
-    location = raw_input()
-    print "You have set your", str(item_type), "at", str(rowcolumn), str(location)
-    return int(location)
+def setBoardLocation(rowcolumn, item_type, rowscolumnsindex):
+    locationset = False
+    while locationset == False:
+        print "Which", str(rowcolumn), "would you like your", str(item_type), "?"
+        location = int(raw_input())
+        if location > 0 and location < rowscolumnsindex:
+            print "You have set your", str(item_type), "at", str(rowcolumn), str(location)
+            return int(location)
+            locationset = True
+        else:
+            print "This location is not on the board. Try another location."
 
 def printBoard(Column_identifier, Column_list):
     print ""
@@ -19,14 +25,25 @@ def printBoard(Column_identifier, Column_list):
     for row in range(len(Column_list)):
         print row, Column_list[row]
 
+def setWall(Column_list, columns, rows):
+    wallset = False
+    while wallset == False:
+        Wall_column = setBoardLocation("column", "Wall", columns)
+        Wall_row = setBoardLocation("row", "Wall", rows)
+        if Column_list[Wall_row][Wall_column] == "W" or Column_list[Wall_row][Wall_column] == "X":
+            print "There is already a Wall there! Try another location."
+        elif Wall_row != Boss_row or Wall_column != Boss_column:
+            Column_list[Wall_row][Wall_column] = "W"
+            wallset = True
+        else:
+            print "That spot is already taken! Try another location" 
+
 #Set up the lists
 for row in range(rows):
     Column_list.append(["O"] * columns) #O for Open
 
 for column in range(columns + 1):
     Column_identifier.append(str(column))
-
-printBoard(Column_identifier, Column_list)
 
 #Set borders
 #The first and last index of each row needs to be walls
@@ -50,23 +67,19 @@ Column_list.append(final_row) #list from 0 to columns
 printBoard(Column_identifier, Column_list)
 
 #Set Boss Location
-Boss_row = setBoardLocation("row", "Boss")
-Boss_column = setBoardLocation("column", "Boss")
+Boss_column = setBoardLocation("column", "Boss", columns)
+Boss_row = setBoardLocation("row", "Boss", rows)
 
 Column_list[Boss_row][Boss_column] = "B"
 
 printBoard(Column_identifier, Column_list)
 
 print "Let's set your first wall!"
-#Set Wall Location
-Wall1_row = setBoardLocation("row", "Wall") #Note the 1 (one) not l
-Wall1_column = setBoardLocation("column", "Wall")
+#Set Wall Location of first wall
+setWall(Column_list, columns, rows)
+printBoard(Column_identifier, Column_list)
 
-if Wall1_row != Boss_row or Wall1_column != Boss_column:
-    Column_list[Wall1_row][Wall1_column] = "W"
-else:
-    print "That spot is already taken!"
-    Wall1_row = setBoardLocation("row", "Wall") #Again, note the 1 (one) not l
-    Wall1_column = setBoardLocation("column", "Wall")
-
+print "Now try another!"
+#Set Wall Location of second wall
+setWall(Column_list, columns, rows)
 printBoard(Column_identifier, Column_list)
