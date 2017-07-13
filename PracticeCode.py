@@ -70,54 +70,87 @@ Column_list.append(final_row) #list from 0 to columns
 startrow = int(round(rows/2) + 1)
 Column_list[startrow][1] = "S"
 
-printBoard(Column_identifier, Column_list)
+###printBoard(Column_identifier, Column_list)
 
 #Set Boss Location
-Boss_column = setBoardLocation("column", "Boss", columns)
-Boss_row = setBoardLocation("row", "Boss", rows)
+Boss_column = 4 ###setBoardLocation("column", "Boss", columns)
+Boss_row = 3 ###setBoardLocation("row", "Boss", rows)
 
 Column_list[Boss_row][Boss_column] = "B"
 
-printBoard(Column_identifier, Column_list)
+###printBoard(Column_identifier, Column_list)
 
 print "Let's set your first wall!"
 #Set Wall Location of first wall
 setWall(Column_list, columns, rows)
 printBoard(Column_identifier, Column_list)
 
-print "Now try another!"
+"""print "Now try another!"
 #Set Wall Location of second wall
 setWall(Column_list, columns, rows)
-printBoard(Column_identifier, Column_list)
+printBoard(Column_identifier, Column_list)"""
 
 
 #Path finding algorithm
-adjacent_coordinates = []
-def checkAdjacent(Column_list):
-    return False
-#if [row][column] is "W" (Wall) or "X" (Exterior Wall), do not add to list
-#if [row][column] is "B" (Boss), execute:
-#print "You have found the boss!"
-#print count
-def findAdjacent(Column_list, startrow):
+def AdjacentLoop(Column_identifier, Column_list, Boss_row, Boss_column):
     count = 1
+    newpoint = range(5)
+    AdjacentList = [[Boss_row, Boss_column, True, False]] #[2] = True correspond to entered
     bossfound = False
-    while bossfound == False:
-        currentrow = startrow
-        currentcolumn = 1
-        if checkAdjacent([currentrow + 1][currentcolumn]) == True:
-            Column_list[currentrow + 1][currentcolumn] = count
-        if checkAdjacent([currentrow - 1][currentcolumn]) == True:
-            Column_list[currentrow - 1][currentcolumn] = count
-        if checkAdjacent([currentrow][currentcolumn + 1]) == True:
-            Column_list[currentrow][currentcolumn + 1] = count
-        if checkAdjacent([currentrow][currentcolumn - 1]) == True:
-            Column_list[currentrow][currentcolumn - 1] = count
+    num = 1
+    while num < 6 and bossfound == False:
+        RunningList = [] #Rooms with adjacent not found; also (re)initialize the list
+        RunningIndices = [] #Indices of above rooms; also (re)initialize the list
+        for items in range(len(AdjacentList)):
+            if AdjacentList[items][3] == False:
+                RunningList.append(AdjacentList[items])
+                RunningIndices.append(items)
+        #print "Adjacent List", AdjacentList, len(AdjacentList)
+        #print "Running List", RunningList
+        #print "Running Indices", RunningIndices
+        #Discover the four adjacent opennings of each new point
+        for point in RunningIndices: #Loop through Indices where adjacent rooms are not found yet
+            AdjacentList.append([AdjacentList[point][0] + 1, \
+                                 AdjacentList[point][1], False, False]) #Append room on right
+            AdjacentList.append([AdjacentList[point][0] - 1, \
+                                 AdjacentList[point][1], False, False]) #Append room on left
+            AdjacentList.append([AdjacentList[point][0], \
+                                 AdjacentList[point][1] + 1, False, False]) #Append room above
+            AdjacentList.append([AdjacentList[point][0], \
+                                 AdjacentList[point][1] - 1, False, False]) #Append room below
+            AdjacentList[point][3] = True
+            #Check if the the adjacent room is valid
+            newpoint = [] #initialize or re-initialize
+            #print "newpoint initial", newpoint
+            newpoint = range(len(AdjacentList) - 4, \
+                             len(AdjacentList)) #Index of the new four items
+            #print "length", len(AdjacentList)
+            #print "newpoint", newpoint
+            for new in newpoint:
+                #print "new", new
+                column =  AdjacentList[new][1] #column coordinate
+                row = AdjacentList[new][0] #row coordinate
+                print "row", row, "column", column
+                if Column_list[row][column] == "S": #Start
+                    print "The hero has found the boss!"
+                    print "Hero traverses", str(count), "rooms."
+                    bossfound = True
+                elif Column_list[row][column] == "O": #Check entered criteria
+                    print "Next open point:", AdjacentList[new]
+                    Column_list[row][column] = str(count)
+                    AdjacentList[new][2] = True
+                elif Column_list[row][column] == "X" or Column_list[row][column] == "W": #Check Wall
+                    print "Hit a wall at", AdjacentList[new]
+                elif Column_list[row][column] == "B": #Check Boss
+                    print "Boss location known"
+            for index in range(len(AdjacentList)):
+                if AdjacentList[len(AdjacentList) - 1][2] == False:
+                    AdjacentList.pop(len(AdjacentList) - 1) #remove all invalid rooms
+        #print "New Adjacent List", AdjacentList
+        printBoard(Column_identifier, Column_list)
+        print "End loop", count
         count += 1
-        bossfound = True
-#add/subtract one to row. Add/subtract one to column
-
-#break loop
-#hence add remaining coordinates to the adjacent_coordinates list
-#set [row][column] to count
-#count += 1
+        num += 1
+        
+AdjacentLoop(Column_identifier, Column_list, Boss_row, Boss_column)
+print "Game complete!"
