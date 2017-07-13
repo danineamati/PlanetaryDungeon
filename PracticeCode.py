@@ -1,7 +1,7 @@
 import random
 
-rows = 6 - 2
-columns = 6
+rows = 5
+columns = 5 + 1
 
 Column_list = [] #Combination of rows to make the array
 Column_identifier = []
@@ -30,7 +30,9 @@ def setWall(Column_list, columns, rows):
     while wallset == False:
         Wall_column = setBoardLocation("column", "Wall", columns)
         Wall_row = setBoardLocation("row", "Wall", rows)
-        if Column_list[Wall_row][Wall_column] == "W" or Column_list[Wall_row][Wall_column] == "X":
+        if Column_list[Wall_row][Wall_column] == "W" or \
+           Column_list[Wall_row][Wall_column] == "X" or \
+           Column_list[Wall_row][Wall_column] == "S":
             print "There is already a Wall there! Try another location."
         elif Wall_row != Boss_row or Wall_column != Boss_column:
             Column_list[Wall_row][Wall_column] = "W"
@@ -64,6 +66,10 @@ for column in range(columns + 1):
     final_row.append("X")
 Column_list.append(final_row) #list from 0 to columns
 
+#Locate the hero starting location
+startrow = int(round(rows/2) + 1)
+Column_list[startrow][1] = "S"
+
 printBoard(Column_identifier, Column_list)
 
 #Set Boss Location
@@ -83,3 +89,35 @@ print "Now try another!"
 #Set Wall Location of second wall
 setWall(Column_list, columns, rows)
 printBoard(Column_identifier, Column_list)
+
+
+#Path finding algorithm
+adjacent_coordinates = []
+def checkAdjacent(Column_list):
+    return False
+#if [row][column] is "W" (Wall) or "X" (Exterior Wall), do not add to list
+#if [row][column] is "B" (Boss), execute:
+#print "You have found the boss!"
+#print count
+def findAdjacent(Column_list, startrow):
+    count = 1
+    bossfound = False
+    while bossfound == False:
+        currentrow = startrow
+        currentcolumn = 1
+        if checkAdjacent([currentrow + 1][currentcolumn]) == True:
+            Column_list[currentrow + 1][currentcolumn] = count
+        if checkAdjacent([currentrow - 1][currentcolumn]) == True:
+            Column_list[currentrow - 1][currentcolumn] = count
+        if checkAdjacent([currentrow][currentcolumn + 1]) == True:
+            Column_list[currentrow][currentcolumn + 1] = count
+        if checkAdjacent([currentrow][currentcolumn - 1]) == True:
+            Column_list[currentrow][currentcolumn - 1] = count
+        count += 1
+        bossfound = True
+#add/subtract one to row. Add/subtract one to column
+
+#break loop
+#hence add remaining coordinates to the adjacent_coordinates list
+#set [row][column] to count
+#count += 1
