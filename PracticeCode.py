@@ -11,7 +11,7 @@ def setBoardLocation(rowcolumn, item_type, rowscolumnsindex):
     while locationset == False:
         print "Which", str(rowcolumn), "would you like your", str(item_type), "?"
         location = int(raw_input())
-        if location > 0 and location < rowscolumnsindex:
+        if location > 0 and location <= rowscolumnsindex:
             print "You have set your", str(item_type), "at", str(rowcolumn), str(location)
             return int(location)
             locationset = True
@@ -70,25 +70,24 @@ Column_list.append(final_row) #list from 0 to columns
 startrow = int(round(rows/2) + 1)
 Column_list[startrow][1] = "S"
 
-###printBoard(Column_identifier, Column_list)
+printBoard(Column_identifier, Column_list)
 
 #Set Boss Location
-Boss_column = 4 ###setBoardLocation("column", "Boss", columns)
-Boss_row = 3 ###setBoardLocation("row", "Boss", rows)
+Boss_column = setBoardLocation("column", "Boss", columns)
+Boss_row = setBoardLocation("row", "Boss", rows)
 
 Column_list[Boss_row][Boss_column] = "B"
 
-###printBoard(Column_identifier, Column_list)
+printBoard(Column_identifier, Column_list)
 
 print "Let's set your first wall!"
 #Set Wall Location of first wall
 setWall(Column_list, columns, rows)
 printBoard(Column_identifier, Column_list)
-
-"""print "Now try another!"
+print "Now try another!"
 #Set Wall Location of second wall
 setWall(Column_list, columns, rows)
-printBoard(Column_identifier, Column_list)"""
+printBoard(Column_identifier, Column_list)
 
 
 #Path finding algorithm
@@ -136,7 +135,7 @@ def AdjacentLoop(Column_identifier, Column_list, Boss_row, Boss_column):
                     print "Hero traverses", str(count), "rooms."
                     bossfound = True
                 elif Column_list[row][column] == "O": #Check entered criteria
-                    print "Next open point:", AdjacentList[new]
+                    #print "Next open point:", AdjacentList[new]
                     Column_list[row][column] = str(count)
                     AdjacentList[new][2] = True
                 elif Column_list[row][column] == "X" or Column_list[row][column] == "W": #Check Wall
@@ -148,9 +147,24 @@ def AdjacentLoop(Column_identifier, Column_list, Boss_row, Boss_column):
                     AdjacentList.pop(len(AdjacentList) - 1) #remove all invalid rooms
         #print "New Adjacent List", AdjacentList
         printBoard(Column_identifier, Column_list)
+        reversed(AdjacentList)
+        seen = 0
+        for index in range(len(AdjacentList)):
+            print AdjacentList[seen]
+            if AdjacentList[seen][2] == False:
+                AdjacentList.pop(len(AdjacentList) - seen) #remove all invalid
+                #print "popped"
+            else:
+                seen += 1
+                #print "up one:", seen
+        reversed(AdjacentList)
+        print len(AdjacentList)
+        #print AdjacentList
         print "End loop", count
         count += 1
         num += 1
+    print "The hero has found the boss!"
+    print "Hero traverses", str(count - 1), "rooms."
         
 AdjacentLoop(Column_identifier, Column_list, Boss_row, Boss_column)
 print "Game complete!"
