@@ -179,14 +179,11 @@ def conditional_adjacent(Column_identifier, Column_list, Checking_row, Checking_
     Bossreached = False
     if Column_list[Checking_row][Checking_column] == "B":
         boss_reached()
-        return ["Boss", [Checking_row], [Checking_column]]
-        BossLocation = [[Checking_row - 1], [Checking_column]]
-    elif Column_list[Checking_row - 1][Checking_column] == "W" \
-         or Column_list[Checking_row - 1][Checking_column] == "X" \
-         or Column_list[Checking_row - 1][Checking_column] == "O":
-        pass
+        return [0, Checking_row, Checking_column]
+    elif Column_list[Checking_row][Checking_column].isdigit():
+        return [int(Column_list[Checking_row][Checking_column]), Checking_row, Checking_column]
     else:
-        return ["Tile", [Checking_row], [Checking_column]]
+        return
 
 def check_adjacent(Column_identifier, Column_list, Current_row, Current_column): #This returns the coordinate of the next lowest number
     TileValue = []
@@ -202,14 +199,11 @@ def check_adjacent(Column_identifier, Column_list, Current_row, Current_column):
     TileValue.append(conditional_adjacent(Column_identifier, Column_list, Current_row + 1, Current_column))
     #Check Left
     TileValue.append(conditional_adjacent(Column_identifier, Column_list, Current_row, Current_column - 1))
+    TileValue = [x for x in TileValue if x!=None]
     TileValue.sort()
     print(TileValue)
-    print(TileValue[0][0], "First Value")
-    print(TileValue[0][1], "Row value")
-    print(TileValue[0][2], "Column value")
-    for item in range(len(TileValue)):
-        if TileValue[0] == "Boss":
-            return ["Boss", TileValue[item][0], BossLocation[item][1]]
+    if TileValue[0][0] == 0:
+        return ["Boss", TileValue[0][1], TileValue[0][2]]
     return ["next", TileValue[0][1], TileValue[0][2]]
 
 def hero_location(Column_identifier, Column_list): #This updates hero location
@@ -223,7 +217,9 @@ def Hero_Movement(Column_identifier, Column_list, startrow): #This puts the abov
     new_location = check_adjacent(Column_identifier, Column_list, initial_location[0], initial_location[1])
     bossreached = False
     while bossreached == False:
+        print(new_location, "New Location")
         if new_location[0] == "Boss":
+            print("Hi!")
             bossreached = True
         else:
             new_location = check_adjacent(Column_identifier, Column_list, new_location[1], new_location[2])
